@@ -35,7 +35,7 @@ jobs:
         run:  |
           pwd
           touch .env
-          ehco PORT=${{ secrets.PORT }} >> .env
+          echo PORT=${{ secrets.PORT }} >> .env
           cat .env
       
       - name: package install. 패키지 설치
