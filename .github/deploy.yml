@@ -32,7 +32,7 @@ jobs:
 
       - name: 환경변수 파일 생성. gitaction에서 보안으로 저장한 값을 불러서 코드에서 사용하도록 처리
         working-directory:  ./
-        run:  |
+        run:
           pwd
           touch .env
           echo PORT=${{ secrets.PORT }} >> .env
@@ -45,3 +45,23 @@ jobs:
       - name: build(babel->표준js, webpack->압축:프런트), jest(단위테스트) 등등 계속 추가 가능 
         working-directory:  ./
         run:  yarn run build
+
+      - name: 빌드한 소스코드, 리소스, 기타 설정 파일 => 압축(.zip)
+        run: zip -r app.zip ./bin ./build ./public ./routes ./views ./app.js ./package.json ./.env
+
+      - name: AWS 접속
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+      
+      - name: 압축한 리소스 => s3에 업로드
+        run:  aws s3 cp --region ap-northeast-2 ./app.zip s3://pusan2024-deploy-bucket/deploy/
+
+      - name: AWS codeDeploy 서비스 절차에 따라 배포 시작
+        run:  aws deploy create-deployment
+              --application-name pusan-code-deploy
+              --deployment-config-name CodeDeployDefault.OneAtTime
+              --deployment-group-name dev
+              --s3-location bucket=pusan2024-deploy-bucket,bundleType=zip,key=deploy/app.zip
