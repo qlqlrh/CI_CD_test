@@ -19,7 +19,10 @@
         - 위치
             - 프로젝트루트/.github/workflows/deploy.yml
             - gitaction을 작동시키는 이벤트(명령, 트리커)는 서브 브런치일 경우 아래처럼 추가 가능
-            ``` pull_request: branches: [dev] ```
+            ```
+                pull_request:
+                    branches: [dev]
+            ```
             - jobs > steps > name => 검증할 내용들을 추가할 수 있다.
                 - paaking .json 추가
                     - "build": "babel routes -d build"
@@ -91,26 +94,26 @@
                 - 위 2개 값을 가지고 github에 환경변수 등록
 
 # CD - EC2에서 수행할 작업
-- ``$ sudo apt install awscli``
-- ``$ sudo aws configure``
+- ```$ sudo apt install awscli```
+- ```$ sudo aws configure```
     - ID, 시크릿키, region, 형식 입력
 - CodeDeploy agent
-    - ``$ wget https://aws-codedeploy-ap-northeast-2.s3.amazonaws.com/latest/install``
-    - ``$ chmod +x ./install``
-    - ``$ sudo apt-get install ruby``
-    - ``$ sudo ./install auto``
-    - ``$ sudo service codedeploy-agent status``
+    - ```$ wget https://aws-codedeploy-ap-northeast-2.s3.amazonaws.com/latest/install```
+    - ```$ chmod +x ./install```
+    - ```$ sudo apt-get install ruby```
+    - ```$ sudo ./install auto```
+    - ```$ sudo service codedeploy-agent status```
         - active (running) : 에이전트 작동 중
 
 - EC2 서버가 재가동 됐을 때 자동으로 에이전트가 가동되도록 설정 (옵션)
-    - ``$ sudo nano /etc/init.d/codedeploy-startup.sh``
+    - ```$ sudo nano /etc/init.d/codedeploy-startup.sh```
     - 편집
     ```
         #!bin/sh
         sudo service codedeploy-agent restart
     ```
     - 저장 후 nano 종료 (ctrl + x, y, 엔터)
-    - ``$ sudo chmod +x /etc/init.d/codedeploy-startup.sh``
+    - ```$ sudo chmod +x /etc/init.d/codedeploy-startup.sh```
 
 
 # CD-소스파일
